@@ -1,0 +1,9 @@
+# Ce fichier dit à Netlify comment construire et déployer le site.
+[build]
+  # Le dossier contenant nos fonctions serveur.
+  functions = "netlify/functions"
+
+# Configuration spécifique à nos fonctions.
+[functions]
+  # On s'assure que Netlify utilise la bonne version de NodeJS pour nos dépendances.
+  node_bundler = "esbuild"
