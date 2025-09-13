@@ -1,213 +1,248 @@
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Créateur de Scène IA</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <style>
-            body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
-            .image-placeholder { background-color: #e2e8f0; border: 2px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-weight: 500; transition: all 0.3s ease; }
-            .image-placeholder:hover { background-color: #d1d5db; border-color: #9ca3af; }
-            .btn-primary { background-color: #4f46e5; color: white; transition: background-color 0.3s ease; }
-            .btn-primary:hover { background-color: #4338ca; }
-            .btn-primary:disabled { background-color: #a5b4fc; cursor: not-allowed; }
-            .loader { border: 5px solid #f3f3f3; border-top: 5px solid #4f46e5; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        </style>
-    </head>
-    <body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
-        <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6 md:p-8">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Créateur de Scène</h1>
-                <p class="text-slate-500 mt-2">Composez une nouvelle image en fusionnant un sujet et une scène.</p>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créateur de Scène IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
+        .image-placeholder { background-color: #e2e8f0; border: 2px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-weight: 500; transition: all 0.3s ease; }
+        .image-placeholder:hover { background-color: #d1d5db; border-color: #9ca3af; }
+        .btn-primary { background-color: #4f46e5; color: white; transition: background-color 0.3s ease; }
+        .btn-primary:hover { background-color: #4338ca; }
+        .btn-primary:disabled { background-color: #a5b4fc; cursor: not-allowed; }
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #4f46e5; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6 md:p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Créateur de Scène</h1>
+            <p class="text-slate-500 mt-2">Composez une nouvelle image en fusionnant un sujet et une scène.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <h2 class="text-lg font-semibold text-slate-700 mb-2">1. Choisissez la scène (arrière-plan)</h2>
+                <label for="scene-upload" class="cursor-pointer">
+                    <div id="scene-placeholder" class="image-placeholder aspect-video rounded-lg">
+                        <img id="scene-preview" class="hidden w-full h-full object-cover rounded-lg" alt="Aperçu de la scène">
+                        <span id="scene-text">Cliquez pour téléverser</span>
+                    </div>
+                </label>
+                <input type="file" id="scene-upload" class="hidden" accept="image/*">
             </div>
-            <div class="grid md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <h2 class="text-lg font-semibold text-slate-700 mb-2">1. Choisissez la scène (arrière-plan)</h2>
-                    <label for="scene-upload" class="cursor-pointer">
-                        <div id="scene-placeholder" class="image-placeholder aspect-video rounded-lg">
-                            <img id="scene-preview" class="hidden w-full h-full object-cover rounded-lg" alt="Aperçu de la scène">
-                            <span id="scene-text">Cliquez pour téléverser</span>
-                        </div>
-                    </label>
-                    <input type="file" id="scene-upload" class="hidden" accept="image/*">
-                </div>
-                <div>
-                    <h2 class="text-lg font-semibold text-slate-700 mb-2">2. Choisissez le sujet (à découper)</h2>
-                     <label for="subject-upload" class="cursor-pointer">
-                        <div id="subject-placeholder" class="image-placeholder aspect-video rounded-lg">
-                            <img id="subject-preview" class="hidden w-full h-full object-cover rounded-lg" alt="Aperçu du sujet">
-                            <span id="subject-text">Cliquez pour téléverser</span>
-                        </div>
-                    </label>
-                    <input type="file" id="subject-upload" class="hidden" accept="image/*">
-                </div>
-            </div>
-            <div class="mb-6">
-                <label for="scale-instructions" class="block text-lg font-semibold text-slate-700 mb-2">3. Instructions de proportion (optionnel)</label>
-                <input type="text" id="scale-instructions" class="w-full p-2 border border-slate-300 rounded-lg" placeholder="Ex: Le foyer doit être plus haut que les chaises longues.">
-            </div>
-            <div class="text-center mb-6">
-                 <button id="generate-btn" class="btn-primary font-bold py-3 px-8 rounded-lg shadow-md disabled:opacity-50" disabled>
-                    4. Générer la Scène
-                </button>
-            </div>
-            <div id="result-section" class="hidden">
-                <h2 class="text-2xl font-bold text-slate-800 text-center mb-4">Voici votre scène !</h2>
-                <div class="w-full aspect-video bg-slate-200 rounded-lg shadow-inner flex items-center justify-center">
-                     <img id="result-image" class="w-full h-full object-contain rounded-lg cursor-pointer" alt="Scène générée">
-                </div>
-                <div id="result-actions" class="mt-4 text-center space-x-4">
-                    <a id="download-link" href="#" download="scene-ia-generee.png" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
-                        Enregistrer
-                    </a>
-                    <button id="view-fullscreen-btn" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
-                        Agrandir
-                    </button>
-                </div>
-            </div>
-            <div id="loader-section" class="hidden text-center">
-                 <div class="flex justify-center items-center mb-4">
-                    <div class="loader"></div>
-                </div>
-                <p class="text-slate-600 font-medium">L'IA travaille sa magie... Veuillez patienter.</p>
-            </div>
-            <div id="error-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-40">
-                <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
-                    <h3 class="text-xl font-bold text-red-600 mb-4">Une erreur est survenue</h3>
-                    <p id="error-message" class="text-slate-600 mb-6">Message d'erreur ici.</p>
-                    <button id="close-modal-btn" class="bg-red-500 text-white font-bold py-2 px-6 rounded-lg">Fermer</button>
-                </div>
-            </div>
-            <div id="fullscreen-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 hidden z-50 cursor-pointer">
-                <img id="fullscreen-image" class="max-w-full max-h-full" src="" alt="Vue agrandie de la scène générée">
-                <button id="close-fullscreen-btn" class="absolute top-4 right-4 text-white text-5xl font-bold leading-none">&times;</button>
+            <div>
+                <h2 class="text-lg font-semibold text-slate-700 mb-2">2. Choisissez le sujet (à découper)</h2>
+                 <label for="subject-upload" class="cursor-pointer">
+                    <div id="subject-placeholder" class="image-placeholder aspect-video rounded-lg">
+                        <img id="subject-preview" class="hidden w-full h-full object-cover rounded-lg" alt="Aperçu du sujet">
+                        <span id="subject-text">Cliquez pour téléverser</span>
+                    </div>
+                </label>
+                <input type="file" id="subject-upload" class="hidden" accept="image/*">
             </div>
         </div>
-        <script>
-            // All the same code as before...
-            const sceneUpload = document.getElementById('scene-upload');
-            const subjectUpload = document.getElementById('subject-upload');
-            const scenePreview = document.getElementById('scene-preview');
-            const subjectPreview = document.getElementById('subject-preview');
-            const sceneText = document.getElementById('scene-text');
-            const subjectText = document.getElementById('subject-text');
-            const scaleInstructions = document.getElementById('scale-instructions');
-            const generateBtn = document.getElementById('generate-btn');
-            const resultSection = document.getElementById('result-section');
-            const loaderSection = document.getElementById('loader-section');
-            const resultImage = document.getElementById('result-image');
-            const downloadLink = document.getElementById('download-link');
-            const viewFullscreenBtn = document.getElementById('view-fullscreen-btn');
-            const errorModal = document.getElementById('error-modal');
-            const errorMessage = document.getElementById('error-message');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const fullscreenModal = document.getElementById('fullscreen-modal');
-            const fullscreenImage = document.getElementById('fullscreen-image');
-            const closeFullscreenBtn = document.getElementById('close-fullscreen-btn');
-    
-            let sceneData = null;
-            let subjectData = null;
-    
-            const handleImageUpload = (event, previewElement, textElement, dataStore) => {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        previewElement.src = e.target.result;
-                        previewElement.classList.remove('hidden');
-                        textElement.classList.add('hidden');
-                        
-                        if (dataStore === 'scene') {
-                            sceneData = e.target.result.split(',')[1];
-                        } else {
-                            subjectData = e.target.result.split(',')[1];
+
+        <div class="mb-6">
+            <label for="scale-instructions" class="block text-lg font-semibold text-slate-700 mb-2">3. Instructions de proportion (optionnel)</label>
+            <input type="text" id="scale-instructions" class="w-full p-2 border border-slate-300 rounded-lg" placeholder="Ex: Le foyer doit être plus haut que les chaises longues.">
+        </div>
+
+        <div class="text-center mb-6">
+             <button id="generate-btn" class="btn-primary font-bold py-3 px-8 rounded-lg shadow-md disabled:opacity-50" disabled>
+                4. Générer la Scène
+            </button>
+        </div>
+
+        <div id="result-section" class="hidden">
+            <h2 class="text-2xl font-bold text-slate-800 text-center mb-4">Voici votre scène !</h2>
+            <div class="w-full aspect-video bg-slate-200 rounded-lg shadow-inner flex items-center justify-center">
+                 <img id="result-image" class="w-full h-full object-contain rounded-lg cursor-pointer" alt="Scène générée">
+            </div>
+            <div id="result-actions" class="mt-4 text-center space-x-4">
+                <a id="download-link" href="#" download="scene-ia-generee.png" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Enregistrer</a>
+                <button id="view-fullscreen-btn" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Agrandir</button>
+            </div>
+        </div>
+        
+        <div id="loader-section" class="hidden text-center">
+             <div class="flex justify-center items-center mb-4"><div class="loader"></div></div>
+            <p class="text-slate-600 font-medium">L'IA travaille sa magie... Veuillez patienter.</p>
+        </div>
+        
+        <div id="error-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-40">
+            <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+                <h3 class="text-xl font-bold text-red-600 mb-4">Une erreur est survenue</h3>
+                <p id="error-message" class="text-slate-600 mb-6">Message d'erreur ici.</p>
+                <button id="close-modal-btn" class="bg-red-500 text-white font-bold py-2 px-6 rounded-lg">Fermer</button>
+            </div>
+        </div>
+
+        <div id="fullscreen-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 hidden z-50 cursor-pointer">
+            <img id="fullscreen-image" class="max-w-full max-h-full" src="" alt="Vue agrandie de la scène générée">
+            <button id="close-fullscreen-btn" class="absolute top-4 right-4 text-white text-5xl font-bold leading-none">&times;</button>
+        </div>
+    </div>
+
+    <script>
+        const sceneUpload = document.getElementById('scene-upload');
+        const subjectUpload = document.getElementById('subject-upload');
+        const scenePreview = document.getElementById('scene-preview');
+        const subjectPreview = document.getElementById('subject-preview');
+        const sceneText = document.getElementById('scene-text');
+        const subjectText = document.getElementById('subject-text');
+        const scaleInstructions = document.getElementById('scale-instructions');
+        const generateBtn = document.getElementById('generate-btn');
+        const resultSection = document.getElementById('result-section');
+        const loaderSection = document.getElementById('loader-section');
+        const resultImage = document.getElementById('result-image');
+        const downloadLink = document.getElementById('download-link');
+        const viewFullscreenBtn = document.getElementById('view-fullscreen-btn');
+        const errorModal = document.getElementById('error-modal');
+        const errorMessage = document.getElementById('error-message');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const fullscreenModal = document.getElementById('fullscreen-modal');
+        const fullscreenImage = document.getElementById('fullscreen-image');
+        const closeFullscreenBtn = document.getElementById('close-fullscreen-btn');
+
+        let sceneData = null;
+        let subjectData = null;
+        const MAX_IMAGE_WIDTH = 1024; // Largeur maximale pour les images
+
+        // --- NOUVELLE FONCTION DE REDIMENSIONNEMENT ---
+        const resizeImage = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        if (img.width <= MAX_IMAGE_WIDTH) {
+                            // Pas besoin de redimensionner
+                            resolve(event.target.result);
+                            return;
                         }
-                        
-                        checkEnableButton();
+
+                        const canvas = document.createElement('canvas');
+                        const scaleFactor = MAX_IMAGE_WIDTH / img.width;
+                        canvas.width = MAX_IMAGE_WIDTH;
+                        canvas.height = img.height * scaleFactor;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        resolve(canvas.toDataURL(file.type));
                     };
-                    reader.readAsDataURL(file);
+                    img.onerror = reject;
+                };
+                reader.onerror = reject;
+            });
+        };
+
+        const handleImageUpload = async (event, previewElement, textElement, dataStore) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                // On redimensionne l'image avant de l'afficher et de la stocker
+                const resizedDataUrl = await resizeImage(file);
+
+                previewElement.src = resizedDataUrl;
+                previewElement.classList.remove('hidden');
+                textElement.classList.add('hidden');
+                
+                if (dataStore === 'scene') {
+                    sceneData = resizedDataUrl.split(',')[1];
+                } else {
+                    subjectData = resizedDataUrl.split(',')[1];
                 }
-            };
-    
-            sceneUpload.addEventListener('change', (e) => handleImageUpload(e, scenePreview, sceneText, 'scene'));
-            subjectUpload.addEventListener('change', (e) => handleImageUpload(e, subjectPreview, subjectText, 'subject'));
-    
-            const checkEnableButton = () => {
-                generateBtn.disabled = !(sceneData && subjectData);
-            };
-    
-            const showError = (message) => {
-                errorMessage.textContent = message;
-                errorModal.classList.remove('hidden');
+                
+                checkEnableButton();
+            } catch (error) {
+                console.error("Erreur lors du traitement de l'image:", error);
+                showError("Impossible de traiter le fichier image.");
+            }
+        };
+
+        sceneUpload.addEventListener('change', (e) => handleImageUpload(e, scenePreview, sceneText, 'scene'));
+        subjectUpload.addEventListener('change', (e) => handleImageUpload(e, subjectPreview, subjectText, 'subject'));
+
+        const checkEnableButton = () => {
+            generateBtn.disabled = !(sceneData && subjectData);
+        };
+
+        const showError = (message) => {
+            errorMessage.textContent = message;
+            errorModal.classList.remove('hidden');
+        };
+        
+        closeModalBtn.addEventListener('click', () => {
+             errorModal.classList.add('hidden');
+        });
+
+        generateBtn.addEventListener('click', async () => {
+            if (!sceneData || !subjectData) {
+                showError("Veuillez téléverser les deux images.");
+                return;
+            }
+
+            loaderSection.classList.remove('hidden');
+            resultSection.classList.add('hidden');
+            generateBtn.disabled = true;
+            
+            const payload = {
+                sceneData: sceneData,
+                subjectData: subjectData,
+                scaleInstructions: scaleInstructions.value.trim()
             };
             
-            closeModalBtn.addEventListener('click', () => {
-                 errorModal.classList.add('hidden');
-            });
-    
-            generateBtn.addEventListener('click', async () => {
-                if (!sceneData || !subjectData) {
-                    showError("Veuillez téléverser les deux images avant de générer la scène.");
-                    return;
+            const apiUrl = `/.netlify/functions/generer-scene`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || `Erreur du serveur: ${response.status}`);
                 }
-    
-                loaderSection.classList.remove('hidden');
-                resultSection.classList.add('hidden');
-                generateBtn.disabled = true;
                 
-                // IMPORTANT: This is the data we send to our secure function
-                const payload = {
-                    sceneData: sceneData,
-                    subjectData: subjectData,
-                    scaleInstructions: scaleInstructions.value.trim()
-                };
-                
-                // IMPORTANT: The API Key is GONE. We call our own serverless function now.
-                const apiUrl = `/.netlify/functions/generer-scene`;
-    
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-    
-                    if (!response.ok) {
-                        const errorResult = await response.json();
-                        throw new Error(errorResult.error || `Erreur du serveur: ${response.status}`);
-                    }
-    
-                    const result = await response.json();
-                    
-                    if (!result.base64Data) {
-                        throw new Error("Aucune donnée d'image n'a été retournée par le serveur.");
-                    }
-    
-                    const imageUrl = `data:image/png;base64,${result.base64Data}`;
-                    resultImage.src = imageUrl;
-                    downloadLink.href = imageUrl;
-                    resultSection.classList.remove('hidden');
-    
-                } catch (error) {
-                    console.error('Erreur lors de la génération:', error);
-                    showError(`Une erreur s'est produite : ${error.message}`);
-                } finally {
-                    loaderSection.classList.add('hidden');
-                    generateBtn.disabled = false;
+                if (!result.base64Data) {
+                    throw new Error("Aucune donnée d'image n'a été retournée par le serveur.");
                 }
-            });
-    
-            const openFullscreen = () => { if (resultImage.src) { fullscreenImage.src = resultImage.src; fullscreenModal.classList.remove('hidden'); } };
-            const closeFullscreen = () => { fullscreenModal.classList.add('hidden'); };
-    
-            resultImage.addEventListener('click', openFullscreen);
-            viewFullscreenBtn.addEventListener('click', openFullscreen);
-            closeFullscreenBtn.addEventListener('click', closeFullscreen);
-            fullscreenModal.addEventListener('click', (e) => { if (e.target === fullscreenModal) { closeFullscreen(); } });
-        </script>
-    </body>
-    </html>
-    
+
+                const imageUrl = `data:image/png;base64,${result.base64Data}`;
+                resultImage.src = imageUrl;
+                downloadLink.href = imageUrl;
+                resultSection.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Erreur lors de la génération:', error);
+                showError(`Une erreur s'est produite : ${error.message}`);
+            } finally {
+                loaderSection.classList.add('hidden');
+                generateBtn.disabled = false;
+            }
+        });
+
+        const openFullscreen = () => { if (resultImage.src) { fullscreenImage.src = resultImage.src; fullscreenModal.classList.remove('hidden'); } };
+        const closeFullscreen = () => { fullscreenModal.classList.add('hidden'); };
+
+        resultImage.addEventListener('click', openFullscreen);
+        viewFullscreenBtn.addEventListener('click', openFullscreen);
+        closeFullscreenBtn.addEventListener('click', closeFullscreen);
+        fullscreenModal.addEventListener('click', (e) => { if (e.target === fullscreenModal) { closeFullscreen(); } });
+    </script>
+</body>
+</html>
+
