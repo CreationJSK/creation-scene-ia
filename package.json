@@ -1,0 +1,9 @@
+{
+  "name": "scene-creator-function",
+  "version": "1.0.0",
+  "description": "Dependencies for Netlify function",
+  "type": "module",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
